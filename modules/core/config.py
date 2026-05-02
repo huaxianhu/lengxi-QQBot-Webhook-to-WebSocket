@@ -23,6 +23,8 @@ _DEFAULTS = {
 def _deep_merge(base: dict, over: dict) -> dict:
     out = base.copy()
     for k, v in over.items():
+        if v is None:
+            continue
         bv = out.get(k)
         out[k] = _deep_merge(bv, v) if isinstance(bv, dict) and isinstance(v, dict) else v
     return out

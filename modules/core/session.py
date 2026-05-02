@@ -151,11 +151,7 @@ def is_logged_in(request: Request) -> bool:
         valid_sessions.pop(token, None)
         db.delete_session(token)
         return False
-    real_ip = get_real_ip(request)
     user_agent = request.headers.get('User-Agent', '')[:200]
-    if info.get('ip') and info.get('ip') != real_ip:
-        logging.warning(f"Session IP不匹配: {info.get('ip')} != {real_ip}")
-        return False
     if info.get('user_agent') and info.get('user_agent')[:200] != user_agent:
         logging.warning("Session User-Agent不匹配")
         return False

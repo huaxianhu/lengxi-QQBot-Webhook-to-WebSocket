@@ -32,7 +32,7 @@ async def get_stats(admin: str = Depends(get_current_admin)):
         }
 
     webhook_counts = {}
-    for t in config.webhook_forward["targets"]:
+    for t in (config.webhook_forward or {}).get("targets") or []:
         aid = t.get("appid", "")
         webhook_counts[aid] = webhook_counts.get(aid, 0) + 1
 
@@ -55,8 +55,8 @@ async def get_stats(admin: str = Depends(get_current_admin)):
         "total_messages": stats_snap.get("total_messages", 0),
         "online": {s: len(c) for s, c in active_connections.items()},
         "forward_config": [{"appid": t.get("appid", ""), "url": t["url"]}
-                           for t in config.webhook_forward["targets"]],
-        "webhook_enabled": config.webhook_forward["enabled"],
+                           for t in (config.webhook_forward or {}).get("targets") or []],
+        "webhook_enabled": (config.webhook_forward or {}).get("enabled", False),
         "per_secret": per_secret,
         "webhook_links_count": webhook_counts,
     }
