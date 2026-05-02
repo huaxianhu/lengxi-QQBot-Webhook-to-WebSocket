@@ -17,7 +17,10 @@ app = create_app()
 
 if __name__ == "__main__":
     import uvicorn
-    logging.getLogger("uvicorn.error").setLevel(logging.ERROR)
+    class _InvalidHttpFilter(logging.Filter):
+        def filter(self, record):
+            return "Invalid HTTP request" not in record.getMessage()
+    logging.getLogger("uvicorn.error").addFilter(_InvalidHttpFilter())
     ssl_cfg = config.ssl
     use_ssl = ssl_cfg.get("ssl_keyfile") and ssl_cfg.get("ssl_certfile")
     uvicorn_cfg = uvicorn.Config(app, host="0.0.0.0", port=config.port,
